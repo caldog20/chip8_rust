@@ -1,7 +1,7 @@
 use std::fs::File;
-use std::io::Read;
+use std::io::*;
 use crate::instructions::*;
-use std::{thread, time};
+// use std::{thread, time};
 
 pub struct Cpu {
     pub mem: [u8; 4096],
@@ -39,6 +39,7 @@ impl Cpu {
         // rom.read(&mut self.mem[0x200..]).unwrap();
         let mut buffer = Vec::<u8>::new(); // create buffer for rom
         rom.read_to_end(&mut buffer);
+        
         // let buff_size = rom.read(&mut buffer[..]); // read bytes into buffer
         for i in 0..buffer.len() {
             self.mem[0x200 + i] = buffer[i];
@@ -83,25 +84,20 @@ impl Cpu {
         let small = opcode & 0x0FFF;
         // println!("{:#05X}, {:#05X} : ", opcode, most_sig_byte);
         println!("{:#05X}", opcode);
-        
-        match opcode {
-            let nib_one = (opcode & 0xF000) >> 12;
-            let nib_two = (opcode & 0x0F00) >> 8;
-            let nib_three = (opcode & 0x00F0) >> 4;
-            let nib_four = (opcode & 0x000F);
+        let nib_one = (opcode & 0xF000) >> 12;
+        let nib_two = (opcode & 0x0F00) >> 8;
+        let nib_three = (opcode & 0x00F0) >> 4;
+        let nib_four = opcode & 0x000F;
             
 
             match (nib_one, nib_two, nib_three, nib_four) {
                 (0,0,0xE,0) => cls(self),
-                (0,0,0xE,0xE) => return(self),
+                (0,0,0xE,0xE) => test(self),
+                _ => panic!("FAIL {:#05X}", opcode)
 
 
 
-            }
-            
-            
-            _ => panic!("FAIL {:#05X}", opcode)
-        }
+            }    
         }
         
     pub fn run(&mut self) {

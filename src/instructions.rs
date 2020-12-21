@@ -10,6 +10,7 @@ pub fn cls(cpu: &mut Cpu) {
 }
 
 pub fn test(cpu: &mut Cpu) {
+    cpu.pc = 1;
     println!("Opcode for CLS Aquired");
 }
 
