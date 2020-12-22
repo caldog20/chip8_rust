@@ -86,6 +86,19 @@ impl Cpu {
         println!("OPCODE FROM MEMORY = {:#06X}", opcode);
         println!("MSBYTE = {:#X}", ms_byte);
         // println!("{:#05X}, {:#05X} : ", opcode, most_sig_byte);
+        /*
+        Program Counter = pc
+        Stack Pointer = sp
+        CPU Registers = v
+        Stack = stack
+        Index Register = i
+        nnn = lower 12 bits of instruction
+        kk = lowest 8 bits of instruction
+        nx = lower 4 bits of high byte
+        ny = lower 4 bits of low byte
+        n = lower 4 bits if instruction
+        */
+
         
         let nibbles = (
             (opcode & 0xF000) >> 12,
@@ -94,25 +107,25 @@ impl Cpu {
             (opcode & 0x000F) >> 0,
         );
         let nnn = (opcode & 0x0FFF) as usize; // Address
-        let kk = (opcode & 0x00FF) as u8; // OPCODE NN
-        let nx = nibbles.1 as usize;
-        let ny = nibbles.2 as usize;
+        let kk = (opcode & 0x00FF) as u8; // OPCODE NN 8 bits
+        let nx = nibbles.1 as usize; // lower 4 bits of high byte
+        let ny = nibbles.2 as usize; // lower 4 bits of low byte
         let n = nibbles.3 as usize; // Lowest 4 bits
             
 
         match ms_byte {
-
             0x0000 => match nnn {
                 0x00E0 => test_code(self), // Clear Screen
-                0x00EE => return_sub(self),
-                _ => panic!("NNN Opcode: {:#05X}", opcode)
+                0x00EE => return_sub(self), // Return subroutine
+                _ => panic!("NNN Opcode: {:#05X}", opcode) // Panic if no other match in lower 12 bits
             }
-            0x1000 => jump_to(self, nnn),
-            0x2000 => call_to(self, nnn),
-            0x3000 => skip_e_vx_kk(self, nx, kk),
-            0x4000 => skip_ne_vx_kk(self, nx, kk),
-            0x5000 => skip_e_vx_vy(self, nx, ny),
-            0x6000 => set_vx_kk(self, nx, kk),
+            0x1000 => jump_to(self, nnn), // jump to address at nnn - set pc to nnn
+            0x2000 => call_to(self, nnn), // call to address at nnn - increment sp, put current pc at top of stack, set pc to nnn
+            0x3000 => skip_e_vx_kk(self, nx, kk), // Skip next instruction if v[x] == kk
+            0x4000 => skip_ne_vx_kk(self, nx, kk), // Skip next instruction if v[x] != kk
+            0x5000 => skip_e_vx_vy(self, nx, ny), // Skip next instruction if v[x] == v[y]
+            0x6000 => set_vx_kk(self, nx, kk), // set v[x] to kk
+            0x7000 => add_vx_kk(self, nx, kk), // Adds kk to v[x] then pushes result to v[x]
             _ => panic!("Invalid Opcode: {:#05X}", opcode)
             }    
         }
