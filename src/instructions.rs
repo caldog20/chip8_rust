@@ -59,5 +59,9 @@ pub fn set_vx_kk(cpu: &mut Cpu, nx:usize, kk: u8) {
     cpu.v[nx] = kk;
     cpu.pc += 2;
 }
+pub fn add_vx_kk(cpu: &mut Cpu, nx:usize, kk: u8) {
+    cpu.v[nx] = cpu.v[nx] + kk;
+    cpu.pc += 2;
+}
 
 
