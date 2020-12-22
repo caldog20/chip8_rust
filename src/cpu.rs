@@ -12,9 +12,11 @@ pub struct Cpu {
     pub v: [u8; 16],
     pub opcode: u16,
     pub dt: u8,
+    pub st: u8,
     pub keyboard: [bool; 16],
     pub display: [u8; 64 * 32],
     pub draw: bool,
+    pub counter: u8
 }
 
 impl Cpu {
@@ -28,9 +30,11 @@ impl Cpu {
             v: [0; 16],
             opcode: 0,
             dt: 0,
+            st: 0,
             keyboard: [false; 16],
             display: [0; 64 * 32],
-            draw: false
+            draw: false,
+            counter: 50
         }
     }
     
@@ -80,6 +84,10 @@ impl Cpu {
     pub fn get_opcode(&self) -> u16 {
         (self.mem[self.pc as usize] as u16) << 8 | (self.mem[(self.pc + 1) as usize] as u16)
     }
+    // pub fn pc_advance(&self, ix: usize) -> usize {
+    //     let xpc == self.pc;
+    //     xpc += ix * 2 as usize
+    // }
 
     pub fn do_opcode(&mut self, opcode: u16) {
         let ms_byte = opcode & 0xF000;
@@ -119,17 +127,49 @@ impl Cpu {
                 0x00EE => return_sub(self), // Return subroutine
                 _ => panic!("NNN Opcode: {:#05X}", opcode) // Panic if no other match in lower 12 bits
             }
-            0x1000 => jump_to(self, nnn), // jump to address at nnn - set pc to nnn
-            0x2000 => call_to(self, nnn), // call to address at nnn - increment sp, put current pc at top of stack, set pc to nnn
+            0x1000 => jump_addr(self, nnn), // jump to address at nnn - set pc to nnn
+            0x2000 => call_addr(self, nnn), // call to address at nnn - increment sp, put current pc at top of stack, set pc to nnn
             0x3000 => skip_e_vx_kk(self, nx, kk), // Skip next instruction if v[x] == kk
             0x4000 => skip_ne_vx_kk(self, nx, kk), // Skip next instruction if v[x] != kk
             0x5000 => skip_e_vx_vy(self, nx, ny), // Skip next instruction if v[x] == v[y]
-            0x6000 => set_vx_kk(self, nx, kk), // set v[x] to kk
-            0x7000 => add_vx_kk(self, nx, kk), // Adds kk to v[x] then pushes result to v[x]
+            0x6000 => load_vx_kk(self, nx, kk), // load v[x] to kk
+            0x7000 => add_vx_kk(self, nx, kk), // Add kk to v[x] then pushes result to v[x]
+            0x8000 => match n { // Match most significant byte 8 against lowest 4 bits
+                0x0 => load_vx_vy(self, nx, ny), // load v[y] into v[x] 
+                0x1 => or_vx_vy(self, nx, ny), // v[x] = v[x] OR v[y]
+                0x2 => and_vx_vy(self, nx, ny), // v[x] = v[x] AND v[y]
+                0x3 => xor_vx_vy(self, nx, ny), // v[x] = v[x] XOR v[y]
+                0x4 => add_vx_vy(self, nx, ny),
+                0x5 => sub_vx_vy(self, nx, ny),
+                0x6 => shr_vx(self, nx),
+                0x7 => subn_vx_vy(self, nx, ny),
+                0xE => shl_vx(self, nx)
+            }
+            0x9000 => skip_ne_vx_vy(self, nx, ny),
+            0xA000 => load_i_addr(self, nnn),
+            0xB000 => jump_v0_addr(self, nnn),
+            0xC000 => rand_vx_kk(self, nx, kk),
+            0xD000 => draw_vx_vy_n(self, nx, ny, n),
+            0xE000 => match kk {
+                0x9E => skip_p_vx(self, nx),
+                0xA1 => skip_np_vx(self, nx)
+            }
+            0xF00 => match kk {
+                0x07 => load_vx_dt(self, nx),
+                0xA0 => load_vx_p(self, nx),
+                0x15 => load_dt_vx(self, nx),
+                0x18 => load_st_vx(self, nx),
+                0x1E => add_i_vx(self, nx),
+                0x29 => load_f_vx(self, nx),
+                0x33 => load_b_vx(self, nx),
+                0x55 => load_i_vx(self, nx),
+                0x65 => load_vx_i(self, nx)
+            }
+
             _ => panic!("Invalid Opcode: {:#05X}", opcode)
             }    
         }
-        
+
     pub fn run_cycle(&mut self) {
         // let opcode = self.get_opcode();
         let opcode = 0x2333; 
