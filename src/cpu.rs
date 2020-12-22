@@ -9,6 +9,7 @@ pub struct Cpu {
     pub i: u16,
     pub sp: usize,
     pub stack: [u16; 16],
+    pub v: [u8; 16],
     pub opcode: u16,
     pub dt: u8,
     pub keyboard: [bool; 16],
@@ -24,6 +25,7 @@ impl Cpu {
             i: 0,
             sp: 0,
             stack: [0; 16],
+            v: [0; 16],
             opcode: 0,
             dt: 0,
             keyboard: [false; 16],
@@ -93,8 +95,8 @@ impl Cpu {
         );
         let nnn = (opcode & 0x0FFF) as usize; // Address
         let kk = (opcode & 0x00FF) as u8; // OPCODE NN
-        let vx = nibbles.1 as usize;
-        let vy = nibbles.2 as usize;
+        let nx = nibbles.1 as usize;
+        let ny = nibbles.2 as usize;
         let n = nibbles.3 as usize; // Lowest 4 bits
             
 
@@ -107,8 +109,10 @@ impl Cpu {
             }
             0x1000 => jump_to(self, nnn),
             0x2000 => call_to(self, nnn),
-            0x3000 => skip_e_vx_kk(self, vx, kk),
-            0x4000 => skip_ne_vx_kk(self, vx, kk),
+            0x3000 => skip_e_vx_kk(self, nx, kk),
+            0x4000 => skip_ne_vx_kk(self, nx, kk),
+            0x5000 => skip_e_vx_vy(self, nx, ny),
+            0x6000 => set_vx_kk(self, nx, kk),
             _ => panic!("Invalid Opcode: {:#05X}", opcode)
             }    
         }

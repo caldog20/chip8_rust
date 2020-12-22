@@ -1,1 +1,4 @@
-/target
+/target/
+/games/
+/old/
+chip8_reference.txt

@@ -29,10 +29,35 @@ pub fn call_to(cpu: &mut Cpu, nnn: usize) {
     cpu.pc = nnn;
     println!("CALL_TO::POST: PC {:#05X}, SP {:#05X}, STACK {:#05X}", cpu.pc, cpu.sp, cpu.stack[cpu.sp]);
 }
-pub fn skip_e_vx_kk(cpu: &mut Cpu, vx: usize, kk: usize) {
-
+pub fn skip_e_vx_kk(cpu: &mut Cpu, nx: usize, kk: u8) {
+    let vx = cpu.v[nx as usize];
+    if vx == kk {
+        cpu.pc += 4;
+    }
+    else {
+        cpu.pc += 2;
+    }
 }
-pub fn skip_ne_vx_kk(cpu: &mut Cpu, vx: usize, kk: usize) {
-
+pub fn skip_ne_vx_kk(cpu: &mut Cpu, nx: usize, kk: u8) {
+    let vx = cpu.v[nx as usize];
+    if vx != kk {
+        cpu.pc += 4;
+    }
+    else {
+        cpu.pc += 2;
+    }
 }
+pub fn skip_e_vx_vy(cpu: &mut Cpu, nx:usize, ny:usize) {
+    if cpu.v[nx] == cpu.v[ny] {
+        cpu.pc += 4;
+    }
+    else {
+        cpu.pc += 2;
+    }
+}
+pub fn set_vx_kk(cpu: &mut Cpu, nx:usize, kk: u8) {
+    cpu.v[nx] = kk;
+    cpu.pc += 2;
+}
+
 
