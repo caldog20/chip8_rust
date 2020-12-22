@@ -44,8 +44,7 @@ impl Cpu {
         let mut rom = File::open(game).unwrap(); // Open file from games dir
         // rom.read(&mut self.mem[0x200..]).unwrap();
         let mut buffer = Vec::<u8>::new(); // create buffer for rom
-        rom.read_to_end(&mut buffer);
-        
+        rom.read_to_end(&mut buffer).expect("Error reading rom to buffer");
         // let buff_size = rom.read(&mut buffer[..]); // read bytes into buffer
         for i in 0..buffer.len() {
             self.mem[0x200 + i] = buffer[i];
