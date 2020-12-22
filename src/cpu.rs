@@ -143,7 +143,8 @@ impl Cpu {
                 0x5 => sub_vx_vy(self, nx, ny),
                 0x6 => shr_vx(self, nx),
                 0x7 => subn_vx_vy(self, nx, ny),
-                0xE => shl_vx(self, nx)
+                0xE => shl_vx(self, nx),
+                _ => panic!("N Opcode: {:#05X}", opcode)
             }
             0x9000 => skip_ne_vx_vy(self, nx, ny),
             0xA000 => load_i_addr(self, nnn),
@@ -152,7 +153,8 @@ impl Cpu {
             0xD000 => draw_vx_vy_n(self, nx, ny, n),
             0xE000 => match kk {
                 0x9E => skip_p_vx(self, nx),
-                0xA1 => skip_np_vx(self, nx)
+                0xA1 => skip_np_vx(self, nx),
+                _ => panic!("KK Opcode: {:#05X}", opcode)
             }
             0xF00 => match kk {
                 0x07 => load_vx_dt(self, nx),
@@ -163,7 +165,8 @@ impl Cpu {
                 0x29 => load_f_vx(self, nx),
                 0x33 => load_b_vx(self, nx),
                 0x55 => load_i_vx(self, nx),
-                0x65 => load_vx_i(self, nx)
+                0x65 => load_vx_i(self, nx),
+                _ => panic!("KK Opcode: {:#05X}", opcode)
             }
 
             _ => panic!("Invalid Opcode: {:#05X}", opcode)
@@ -171,8 +174,8 @@ impl Cpu {
         }
 
     pub fn run_cycle(&mut self) {
-        // let opcode = self.get_opcode();
-        let opcode = 0x2333; 
+        let opcode = self.get_opcode();
+        //let opcode = 0x2333; 
         self.do_opcode(opcode);
         self.load_fonts();
     }

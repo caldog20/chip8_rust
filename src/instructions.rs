@@ -85,11 +85,11 @@ pub fn or_vx_vy(cpu: &mut Cpu, nx:usize, ny: usize) {
     pc_advance(cpu, 1);
 }
 pub fn and_vx_vy(cpu: &mut Cpu, nx:usize, ny: usize) {
-    cpu.v[nx] = cpu.v[x] & cpu.v[ny];
+    cpu.v[nx] = cpu.v[nx] & cpu.v[ny];
     pc_advance(cpu, 1);
 }
 pub fn xor_vx_vy(cpu: &mut Cpu, nx:usize, ny: usize) {
-    cpu.v[nx] = cpu.v[x] ^ cpu.v[ny];
+    cpu.v[nx] = cpu.v[nx] ^ cpu.v[ny];
     pc_advance(cpu, 1);
 }
 pub fn add_vx_vy(cpu: &mut Cpu, nx:usize, ny: usize) {
@@ -121,16 +121,16 @@ pub fn shl_vx(cpu: &mut Cpu, nx:usize) {
     pc_advance(cpu, 1);
 }
 pub fn load_i_addr(cpu: &mut Cpu, nnn:usize) {
-    cpu.i = nnn;
+    cpu.i = nnn as u16;
     pc_advance(cpu, 1);
 }
 pub fn jump_v0_addr(cpu: &mut Cpu, nnn:usize) {
     cpu.pc = nnn + cpu.v[0] as usize;
     pc_advance(cpu, 1);
 }
-pub fn rand_vx_kk(cpu: &mut Cpu, nx:usize, kk: usize) {
+pub fn rand_vx_kk(cpu: &mut Cpu, nx:usize, kk: u8) {
     let mut rng = rand::thread_rng();
-    let random: u8 = rng.gen_range(0..256);
+    let random: u8 = rng.gen_range(0..255);
     cpu.v[nx] = random & kk as u8;
     pc_advance(cpu, 1);
 }
@@ -188,5 +188,5 @@ pub fn load_i_vx(cpu: &mut Cpu, nx:usize) {
 
 }
 pub fn load_vx_i(cpu: &mut Cpu, nx:usize) {
-    
+
 }
