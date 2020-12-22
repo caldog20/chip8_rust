@@ -1,19 +1,21 @@
-# Overview of code factorization and flow
+# Overview of CHIP8 emulator in Rust
 
-## Code Factorization 
-
-- CPU - cpu.rs
-  - Instructions from memory are executed
-- MEM - mem.rs
-  - Functions to allocate, read, and write to memory
+## Code Layout
 - Main - main.rs
   - Main Game Loop
-  - Loads ROM
-  - Display Output
-  - Sound output 
-  - Input from Keyboard (SDL?)
-- Fonts
-  - Load fonts into app
+  - Function Calls
+- CPU - cpu.rs
+  - CPU Initialize
+  - Determine OPcode and execute instruction functions
+  - Load inital ROM/GAME
+  - Load Fonts
+- Instructions - instructions.rs
+  - functions for instruction execution used by CPU
+- MEM - mem.rs
+  - Will move from cpu.rs to mem.rs 
+  - Functions to allocate, read, and write to memory
+
+
 
 
 
