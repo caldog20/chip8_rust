@@ -14,6 +14,10 @@
 - MEM - mem.rs
   - Will move from cpu.rs to mem.rs 
   - Functions to allocate, read, and write to memory
+- Subsystem - subsystem.rs
+  - SDL
+  - Display
+  - Audio
 
 
 
