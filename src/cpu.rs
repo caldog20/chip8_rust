@@ -7,7 +7,7 @@ pub struct Cpu {
     pub mem: [u8; 4096],
     pub pc: usize,
     pub i: u16,
-    pub sp: u8,
+    pub sp: usize,
     pub stack: [u16; 16],
     pub opcode: u16,
     pub dt: u8,
@@ -80,29 +80,42 @@ impl Cpu {
     }
 
     pub fn do_opcode(&mut self, opcode: u16) {
-        // let most_sig_byte = opcode & 0xF000;
-        let small = opcode & 0x0FFF;
+        let ms_byte = opcode & 0xF000;
+        println!("OPCODE FROM MEMORY = {:#06X}", opcode);
+        println!("MSBYTE = {:#X}", ms_byte);
         // println!("{:#05X}, {:#05X} : ", opcode, most_sig_byte);
-        println!("{:#05X}", opcode);
-        let nib_one = (opcode & 0xF000) >> 12;
-        let nib_two = (opcode & 0x0F00) >> 8;
-        let nib_three = (opcode & 0x00F0) >> 4;
-        let nib_four = opcode & 0x000F;
+        
+        let nibbles = (
+            (opcode & 0xF000) >> 12,
+            (opcode & 0x0F00) >> 8,
+            (opcode & 0x00F0) >> 4,
+            (opcode & 0x000F) >> 0,
+        );
+        let nnn = (opcode & 0x0FFF) as usize; // Address
+        let kk = (opcode & 0x00FF) as u8; // OPCODE NN
+        let vx = nibbles.1 as usize;
+        let vy = nibbles.2 as usize;
+        let n = nibbles.3 as usize; // Lowest 4 bits
             
 
-            match (nib_one, nib_two, nib_three, nib_four) {
-                (0,0,0xE,0) => cls(self),
-                (0,0,0xE,0xE) => test(self),
-                _ => panic!("FAIL {:#05X}", opcode)
+        match ms_byte {
 
-
-
+            0x0000 => match nnn {
+                0x00E0 => test_code(self), // Clear Screen
+                0x00EE => return_sub(self),
+                _ => panic!("NNN Opcode: {:#05X}", opcode)
+            }
+            0x1000 => jump_to(self, nnn),
+            0x2000 => call_to(self, nnn),
+            0x3000 => skip_e_vx_kk(self, vx, kk),
+            0x4000 => skip_ne_vx_kk(self, vx, kk),
+            _ => panic!("Invalid Opcode: {:#05X}", opcode)
             }    
         }
         
-    pub fn run(&mut self) {
-        let opcode = self.get_opcode();
-        // let opcode = 
+    pub fn run_cycle(&mut self) {
+        // let opcode = self.get_opcode();
+        let opcode = 0x2333; 
         self.do_opcode(opcode);
         self.load_fonts();
     }
