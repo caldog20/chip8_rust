@@ -1,3 +1,4 @@
+extern crate rand;
 use crate::cpu::Cpu;
 use rand::Rng;
 
@@ -135,6 +136,21 @@ pub fn rand_vx_kk(cpu: &mut Cpu, nx:usize, kk: u8) {
     pc_advance(cpu, 1);
 }
 pub fn draw_vx_vy_n(cpu: &mut Cpu, nx:usize, ny: usize, n: usize) {
+    cpu.v[0xF] = 0;
+    for y in 0..n {
+        let pixel = cpu.mem[(cpu.i as usize + y as usize)];
+        for x in 0..8 {
+            if (pixel & 0x80 >> x) != 0 {
+                let position = ((nx as u16 + x as u16) + ((ny as u16 + y as u16) * 64)) % (32*64);
+                if cpu.display[position as usize] == 1 {
+                    cpu.v[0xF] = 1;
+                }
+                cpu.display[position as usize] ^= 1;
+            }
+        }
+    }
+    cpu.draw = true;
+    pc_advance(cpu, 1);
 
 }
 pub fn skip_p_vx(cpu: &mut Cpu, nx:usize) {
@@ -179,14 +195,28 @@ pub fn add_i_vx(cpu: &mut Cpu, nx:usize) {
     pc_advance(cpu, 1);
 }
 pub fn load_f_vx(cpu: &mut Cpu, nx:usize) {
+    cpu.i = (nx * 0x5) as u16;
+    pc_advance(cpu, 1);
 
 }
 pub fn load_b_vx(cpu: &mut Cpu, nx:usize) {
+    cpu.mem[cpu.i as usize] = nx as u8 / 100;
+    cpu.mem[(cpu.i + 1) as usize] = (nx as u8/ 10) % 10;
+    cpu.mem[(cpu.i + 2) as usize] = (nx as u8 % 100) % 10;
+    pc_advance(cpu, 1);
 
 }
 pub fn load_i_vx(cpu: &mut Cpu, nx:usize) {
-
+    for i in 0..nx + 1 {
+        cpu.mem[cpu.i as usize + 1 as usize] = cpu.v[i as usize];
+    }
+    pc_advance(cpu, 1);
 }
 pub fn load_vx_i(cpu: &mut Cpu, nx:usize) {
+    for i in 0..nx + 1 {
+        cpu.v[i as usize] = cpu.mem[(cpu.i + i as u16) as usize];
+    }
+    pc_advance(cpu, 1);
 
 }
+

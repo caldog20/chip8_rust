@@ -45,6 +45,7 @@ impl Cpu {
         // rom.read(&mut self.mem[0x200..]).unwrap();
         let mut buffer = Vec::<u8>::new(); // create buffer for rom
         rom.read_to_end(&mut buffer).expect("Error reading rom to buffer");
+        
         // let buff_size = rom.read(&mut buffer[..]); // read bytes into buffer
         for i in 0..buffer.len() {
             self.mem[0x200 + i] = buffer[i];
@@ -171,12 +172,16 @@ impl Cpu {
             _ => panic!("Invalid Opcode: {:#05X}", opcode)
             }    
         }
+    
+    
 
     pub fn run_cycle(&mut self) {
         let opcode = self.get_opcode();
         //let opcode = 0x2333; 
         self.do_opcode(opcode);
-        self.load_fonts();
+        if self.dt > 0 {
+            self.dt -= 1;
+        }
     }
 
 }
