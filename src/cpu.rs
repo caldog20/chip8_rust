@@ -36,7 +36,7 @@ impl Cpu {
             draw: false,
             counter: 10,
             quit: false,
-            speed: 600
+            speed: 2400
         }
     }
     pub fn load_rom(&mut self, game: &str) {
@@ -157,7 +157,7 @@ impl Cpu {
             }
             0xF000 => match kk {
                 0x0007 => load_vx_dt(self, nx),
-                0x00A0 => load_vx_p(self, nx),
+                0x000A => load_vx_p(self, nx),
                 0x0015 => load_dt_vx(self, nx),
                 0x0018 => load_st_vx(self, nx),
                 0x001E => add_i_vx(self, nx),
