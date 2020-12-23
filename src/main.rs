@@ -27,6 +27,10 @@ pub fn main() {
                 Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'running
                 },
+                Event::KeyDown { keycode: Some(Keycode::Space), .. } => { 
+                    cpu.restart = true;
+                    break 'running 
+                },
                 Event::KeyDown { keycode: Some(keycode), .. } => subsystem.key_down(&mut cpu, keycode),
                 Event::KeyUp { keycode: Some(keycode), .. } => subsystem.key_up(&mut cpu, keycode),
                 _ => {}
@@ -37,5 +41,8 @@ pub fn main() {
         if cpu.draw {
             subsystem.cpu_draw(&mut cpu, SCALE);
         }
+    }
+    if cpu.restart == true {
+        println!("RESTART");
     }
 }

@@ -69,7 +69,6 @@ impl Subsystem {
             Keycode::X => { cpu.keyboard[0x0] = true; },
             Keycode::C => { cpu.keyboard[0xB] = true; },
             Keycode::V => { cpu.keyboard[0xF] = true; },
-            Keycode::P => {cpu.restart = true; },
             _ => {}
 
         }
@@ -93,7 +92,6 @@ impl Subsystem {
             Keycode::X => { cpu.keyboard[0x0] = false; },
             Keycode::C => { cpu.keyboard[0xB] = false; },
             Keycode::V => { cpu.keyboard[0xF] = false; },
-            // Keycode::Space => {cpu.restart = false; }
             _ => {}
 
         }
