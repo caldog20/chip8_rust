@@ -9,16 +9,16 @@ use std::env;
 use std::time::Duration;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-
-static SCALE: u32 = 10;
+static SCALE: u32 = 12;
 
 
 pub fn main() {
     let sdl = sdl2::init().unwrap();
     let mut cpu = Cpu::init();
     let mut subsystem = Subsystem::init(&sdl, SCALE);
+    let args: Vec<String> = env::args().collect();
     cpu.load_fonts();
-    cpu.load_rom("games/PONG");
+    cpu.load_rom(&args[1]);
     
     let mut event_pump = sdl.event_pump().unwrap();
     'running: loop {
@@ -33,7 +33,7 @@ pub fn main() {
             }
         }
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 600));
-        cpu.run_cycle();
+        cpu.run_cycle(&mut subsystem);
         if cpu.draw {
             subsystem.cpu_draw(&mut cpu, SCALE);
         }

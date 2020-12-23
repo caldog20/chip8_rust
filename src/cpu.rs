@@ -1,7 +1,7 @@
 use std::fs::File;
-use std::io::*;
+use std::io::Read;
 use crate::instructions::*;
-// use std::{thread, time};
+use crate::subsystem::Subsystem;
 
 pub struct Cpu {
     pub mem: [u8; 4096],
@@ -10,13 +10,13 @@ pub struct Cpu {
     pub sp: usize,
     pub stack: [u16; 16],
     pub v: [u8; 16],
-    pub opcode: u16,
     pub dt: u8,
     pub st: u8,
     pub keyboard: [bool; 16],
     pub display: [u8; 64 * 32],
     pub draw: bool,
-    pub counter: u8
+    pub counter: u8,
+    pub restart: bool
 }
 
 impl Cpu {
@@ -28,13 +28,13 @@ impl Cpu {
             sp: 0,
             stack: [0; 16],
             v: [0; 16],
-            opcode: 0,
             dt: 0,
             st: 0,
             keyboard: [false; 16],
             display: [0; 64 * 32],
             draw: false,
-            counter: 50
+            counter: 10,
+            restart: false
         }
     }
     
@@ -42,15 +42,12 @@ impl Cpu {
     pub fn load_rom(&mut self, game: &str) {
         println!("Loading Game...");
         let mut rom = File::open(game).unwrap(); // Open file from games dir
-        // rom.read(&mut self.mem[0x200..]).unwrap();
         let mut buffer = Vec::<u8>::new(); // create buffer for rom
         rom.read_to_end(&mut buffer).expect("Error reading rom to buffer");
         
-        // let buff_size = rom.read(&mut buffer[..]); // read bytes into buffer
         for i in 0..buffer.len() {
             self.mem[0x200 + i] = buffer[i];
         }
-        // thread::sleep(time::Duration::from_secs(1));
     }
 
     pub fn load_fonts(&mut self) {
@@ -77,7 +74,6 @@ impl Cpu {
         for i in 0..fonts.len() {
             self.mem[i] = fonts[i];
             // println!("MemLoc {:#05X}, Font {:#05X}", i, fonts[i]);
-            // thread::sleep(time::Duration::from_micros(150000));
         }
     }
 
@@ -90,10 +86,6 @@ impl Cpu {
     // }
 
     pub fn do_opcode(&mut self, opcode: u16) {
-        let ms_byte = opcode & 0xF000;
-        println!("OPCODE FROM MEMORY = {:#06X}", opcode);
-        println!("MSBYTE = {:#X}", ms_byte);
-        // println!("{:#05X}, {:#05X} : ", opcode, most_sig_byte);
         /*
         Program Counter = pc
         Stack Pointer = sp
@@ -106,24 +98,31 @@ impl Cpu {
         ny = lower 4 bits of low byte
         n = lower 4 bits if instruction
         */
+        let ms_byte = opcode & 0xF000;
+        // println!("OPCODE {:#06X}, MS_BYTE {:#05X} : ", opcode, ms_byte);
 
-        
         let nibbles = (
             (opcode & 0xF000) >> 12,
             (opcode & 0x0F00) >> 8,
             (opcode & 0x00F0) >> 4,
-            (opcode & 0x000F) >> 0,
+            (opcode & 0x000F)
         );
         let nnn = (opcode & 0x0FFF) as usize; // Address
+        // println!("nnn = {:#X}", nnn);
         let kk = (opcode & 0x00FF) as u8; // OPCODE NN 8 bits
+        // println!("kk = {:#02X}", kk);
         let nx = nibbles.1 as usize; // lower 4 bits of high byte
+        // println!("nx = {:#X}", nx);
         let ny = nibbles.2 as usize; // lower 4 bits of low byte
+        // println!("ny = {:#X}", ny);
         let n = nibbles.3 as usize; // Lowest 4 bits
+        // println!("n = {:#X}", n);
+        
             
 
         match ms_byte {
             0x0000 => match nnn {
-                0x00E0 => test_code(self), // Clear Screen
+                0x00E0 => clear_screen(self), // Clear Screen
                 0x00EE => return_sub(self), // Return subroutine
                 _ => panic!("NNN Opcode: {:#05X}", opcode) // Panic if no other match in lower 12 bits
             }
@@ -152,20 +151,20 @@ impl Cpu {
             0xC000 => rand_vx_kk(self, nx, kk),
             0xD000 => draw_vx_vy_n(self, nx, ny, n),
             0xE000 => match kk {
-                0x9E => skip_p_vx(self, nx),
-                0xA1 => skip_np_vx(self, nx),
+                0x009E => skip_p_vx(self, nx),
+                0x00A1 => skip_np_vx(self, nx),
                 _ => panic!("KK Opcode: {:#05X}", opcode)
             }
-            0xF00 => match kk {
-                0x07 => load_vx_dt(self, nx),
-                0xA0 => load_vx_p(self, nx),
-                0x15 => load_dt_vx(self, nx),
-                0x18 => load_st_vx(self, nx),
-                0x1E => add_i_vx(self, nx),
-                0x29 => load_f_vx(self, nx),
-                0x33 => load_b_vx(self, nx),
-                0x55 => load_i_vx(self, nx),
-                0x65 => load_vx_i(self, nx),
+            0xF000 => match kk {
+                0x0007 => load_vx_dt(self, nx),
+                0x00A0 => load_vx_p(self, nx),
+                0x0015 => load_dt_vx(self, nx),
+                0x0018 => load_st_vx(self, nx),
+                0x001E => add_i_vx(self, nx),
+                0x0029 => load_f_vx(self, nx),
+                0x0033 => load_b_vx(self, nx),
+                0x0055 => load_i_vx(self, nx),
+                0x0065 => load_vx_i(self, nx),
                 _ => panic!("KK Opcode: {:#05X}", opcode)
             }
 
@@ -173,15 +172,32 @@ impl Cpu {
             }    
         }
     
-    
-
-    pub fn run_cycle(&mut self) {
-        let opcode = self.get_opcode();
-        //let opcode = 0x2333; 
-        self.do_opcode(opcode);
-        if self.dt > 0 {
-            self.dt -= 1;
+    pub fn handle_timers(&mut self, subsystem: &mut Subsystem) {
+        if self.counter == 10 {
+            if self.dt > 0 {
+                self.dt -= 1;
+            }
+            if self.st > 0 {
+                if self.st == 1 {
+                    subsystem.start_beep();
+                }
+                self.st -= 1;
+            } else if self.st == 0 {
+                subsystem.stop_beep();
+            }
+            self.counter = 0;
+        } else {
+            self.counter += 1;
         }
+    }
+
+
+    pub fn run_cycle(&mut self, subsystem: &mut Subsystem) {
+        let opcode = self.get_opcode();
+        // let opcode = 0xF090;
+        self.do_opcode(opcode);
+        // println!("PC {:#05X} SP {:#05X} DT {:#05X} ST {:#05X} I {:#05X} STACK {:#05X}", self.pc, self.sp, self.dt, self.st, self.i, self.stack[self.sp]);
+        self.handle_timers(subsystem);
     }
 
 }
