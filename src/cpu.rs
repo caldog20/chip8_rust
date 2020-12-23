@@ -16,7 +16,8 @@ pub struct Cpu {
     pub display: [u8; 64 * 32],
     pub draw: bool,
     pub counter: u8,
-    pub restart: bool
+    pub quit: bool,
+    pub speed: u32
 }
 
 impl Cpu {
@@ -34,12 +35,12 @@ impl Cpu {
             display: [0; 64 * 32],
             draw: false,
             counter: 10,
-            restart: false
+            quit: false,
+            speed: 600
         }
     }
-    
-    
     pub fn load_rom(&mut self, game: &str) {
+        // Load game rom into memory starting a 0x200
         println!("Loading Game...");
         let mut rom = File::open(game).unwrap(); // Open file from games dir
         let mut buffer = Vec::<u8>::new(); // create buffer for rom
@@ -49,7 +50,6 @@ impl Cpu {
             self.mem[0x200 + i] = buffer[i];
         }
     }
-
     pub fn load_fonts(&mut self) {
     // Functions for reading and writing bytes to memory
         let fonts = [

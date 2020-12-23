@@ -17,7 +17,7 @@ pub struct Subsystem {
 impl Subsystem {
     pub fn init(context: &Sdl, scale: u32) -> Subsystem {
         let vid_subsystem = context.video().unwrap();
-        let window = vid_subsystem.window("Chip8_Rust", 64 * scale, 32 * scale)
+        let window = vid_subsystem.window("Caleb's Rust Chip8 Emulator", 64 * scale, 32 * scale)
             .position_centered()
             .opengl()
             .build()
