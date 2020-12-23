@@ -36,14 +36,14 @@ fn game_loop() {
                     Event::KeyDown { keycode: Some(Keycode::Space), .. } => { 
                         break 'running 
                     },
-                    Event::KeyDown { keycode: Some(Keycode::Up), .. } => cpu.speed += 100,
-                    Event::KeyDown { keycode: Some(Keycode::Down), .. } => cpu.speed -= 100,
+                    Event::KeyDown { keycode: Some(Keycode::Up), .. } => cpu.speed += 600,
+                    Event::KeyDown { keycode: Some(Keycode::Down), .. } => cpu.speed -= 600,
                     Event::KeyDown { keycode: Some(keycode), .. } => subsystem.key_down(&mut cpu, keycode),
                     Event::KeyUp { keycode: Some(keycode), .. } => subsystem.key_up(&mut cpu, keycode),
                     _ => {}
                 }
-                if cpu.speed <= 100 {
-                    cpu.speed = 100;
+                if cpu.speed <= 600 {
+                    cpu.speed = 600;
                 }
             }
             ::std::thread::sleep(Duration::new(0, 1_000_000_000 as u32 / cpu.speed));
