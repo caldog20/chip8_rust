@@ -12,12 +12,15 @@
 - Instructions - instructions.rs
   - functions for instruction execution used by CPU
 - MEM - mem.rs
-  - Will move from cpu.rs to mem.rs 
+  - Will move from cpu.rs to mem.rs
+  - Memory Initialize
+  - Struct and impl 
   - Functions to allocate, read, and write to memory
 - Subsystem - subsystem.rs
   - SDL
   - Display
   - Audio
+  - Key input
 
 
 
