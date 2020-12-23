@@ -3,7 +3,6 @@
 ## Code Layout
 - Main - main.rs
   - Main Game Loop
-  - Function Calls
 - CPU - cpu.rs
   - CPU Initialize
   - Determine OPcode and execute instruction functions
