@@ -1,4 +1,35 @@
-# Overview of CHIP8 emulator in Rust
+# CHIP8 Emulator in Rust
+
+## Test the Emulator!
+
+The emulator requires SDL.
+
+
+
+To run the emulator, clone the repo and inside the directory:
+```
+cargo run </path/to/game>
+```
+
+The speed the emulator runs can be increased/decreased with Up/Down arrow.
+Escape will quit and Space will restart
+
+Key mapping is as follows:
+
+Chip8 Keypad    Emulator Keymap
+| | | | |       | | | | |
+|-|-|-|-|       |-|-|-|-|
+|1|2|3|C|       |1|2|3|4|
+|4|5|6|D|       |Q|W|E|R|
+|7|8|9|E|       |A|S|D|F|
+|A|0|B|F|       |Z|X|C|V|       
+                      
+                      
+                      
+                      
+                      
+
+
 
 ## Code Layout
 - Main - main.rs
