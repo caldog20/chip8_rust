@@ -42,17 +42,13 @@ Mapped Key Layout
 - Main - main.rs
   - Main Game Loop
 - CPU - cpu.rs
-  - CPU Initialize
+  - CPU Initialization
   - Determine OPcode and execute instruction functions
-  - Load inital ROM/GAME
-  - Load Fonts
+  - Load ROM into memory
+  - Load Fonts into memory
+  - Emulator Timers
 - Instructions - instructions.rs
   - functions for instruction execution used by CPU
-- MEM - mem.rs
-  - Will move from cpu.rs to mem.rs
-  - Memory Initialize
-  - Struct and impl 
-  - Functions to allocate, read, and write to memory
 - Subsystem - subsystem.rs
   - SDL
   - Display
