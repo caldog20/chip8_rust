@@ -12,6 +12,7 @@ cargo run </path/to/game>
 ```
 
 The speed the emulator runs can be increased/decreased with Up/Down arrow.
+
 Escape will quit and Space will restart
 
 Key mapping is as follows:
