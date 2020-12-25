@@ -17,6 +17,8 @@ Escape will quit and Space will restart
 Key mapping is as follows:
 
 Chip8 Keypad    Emulator Keymap
+
+
 | | | | |       | | | | |
 |-|-|-|-|       |-|-|-|-|
 |1|2|3|C|       |1|2|3|4|
