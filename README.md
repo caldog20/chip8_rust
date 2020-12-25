@@ -16,15 +16,21 @@ Escape will quit and Space will restart
 
 Key mapping is as follows:
 
-Chip8 Key  Mapped Key      
-|-|-|-|-| x |-|-|-|-|
-| | | | | x | | | | | 
-|1|2|3|C| x |1|2|3|4|     
-|4|5|6|D| x |Q|W|E|R|     
-|7|8|9|E| x |A|S|D|F|     
-|A|0|B|F| x |Z|X|C|V|           
+Chip8 Key Original Layout      
+|-|-|-|-|  
+| | | | |  
+|1|2|3|C|       
+|4|5|6|D|       
+|7|8|9|E|       
+|A|0|B|F|             
                       
-                      
+Mapped Key Layout
+| | | | |
+|-|-|-|-|
+|1|2|3|4|
+|Q|W|E|R|
+|A|S|D|F|
+|Z|X|C|V|              
                       
                       
                       
