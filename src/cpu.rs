@@ -185,7 +185,7 @@ impl Cpu {
     pub fn run_cycle(&mut self, subsystem: &mut Subsystem) {
         let opcode = self.get_opcode();
         println!("Opcode {:#05X} PC {:#05X} SP {:#05X} DT {:#} ST {:#} I {:#05X} STACK {:#05X},
-        Speed {:#}", opcode, self.pc, self.sp, self.dt, self.st, self.i, self.stack[self.sp],
+Speed {:#}", opcode, self.pc, self.sp, self.dt, self.st, self.i, self.stack[self.sp],
         self.speed);
         self.do_opcode(opcode);
         self.handle_timers(subsystem);
