@@ -26,6 +26,7 @@ fn game_loop() {
         cpu.load_rom(&args[1]);
         let mut event_pump = sdl.event_pump().unwrap();
         'running: loop {
+            let mut pause = false;
             for event in event_pump.poll_iter() {
                 match event {
                     Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
@@ -35,6 +36,9 @@ fn game_loop() {
                     },
                     Event::KeyDown { keycode: Some(Keycode::Space), .. } => { 
                         break 'running 
+                    },
+                    Event::KeyDown { keycode: Some(Keycode::Tab), .. } => { 
+                        pause = !pause;
                     },
                     Event::KeyDown { keycode: Some(Keycode::Up), .. } => cpu.speed += 600,
                     Event::KeyDown { keycode: Some(Keycode::Down), .. } => cpu.speed -= 600,
@@ -50,6 +54,9 @@ fn game_loop() {
             cpu.run_cycle(&mut subsystem);
             if cpu.draw {
                 subsystem.cpu_draw(&mut cpu, SCALE);
+            }
+            if pause {
+                print!(".");
             }
             }
         if cpu.quit == true {

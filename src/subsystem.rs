@@ -17,7 +17,7 @@ pub struct Subsystem {
 impl Subsystem {
     pub fn init(context: &Sdl, scale: u32) -> Subsystem {
         let vid_subsystem = context.video().unwrap();
-        let window = vid_subsystem.window("Caleb's Rust Chip8 Emulator", 64 * scale, 32 * scale)
+        let window = vid_subsystem.window("Caleb's Chip8 Emulator in Rust!", 64 * scale, 32 * scale)
             .position_centered()
             .opengl()
             .build()
@@ -51,7 +51,7 @@ impl Subsystem {
     }
 
     pub fn key_down(&mut self, cpu: &mut Cpu, keycode: Keycode) {
-        // println!("KEY DETECTED DOWN");
+        println!("KEY DOWN");
         match keycode {
             Keycode::Num1 => { cpu.keyboard[0x1] = true; },
             Keycode::Num2 => { cpu.keyboard[0x2] = true; },
@@ -74,7 +74,7 @@ impl Subsystem {
         }
     }
     pub fn key_up(&mut self, cpu: &mut Cpu, keycode: Keycode) {
-        // println!("KEY DETECTED UP");
+        println!("KEY UP");
         match keycode {
             Keycode::Num1 => { cpu.keyboard[0x1] = false; },
             Keycode::Num2 => { cpu.keyboard[0x2] = false; },

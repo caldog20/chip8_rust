@@ -80,10 +80,6 @@ impl Cpu {
     pub fn get_opcode(&self) -> u16 {
         (self.mem[self.pc as usize] as u16) << 8 | (self.mem[(self.pc + 1) as usize] as u16)
     }
-    // pub fn pc_advance(&self, ix: usize) -> usize {
-    //     let xpc == self.pc;
-    //     xpc += ix * 2 as usize
-    // }
 
     pub fn do_opcode(&mut self, opcode: u16) {
         /*
@@ -99,7 +95,6 @@ impl Cpu {
         n = lower 4 bits if instruction
         */
         let ms_byte = opcode & 0xF000;
-        // println!("OPCODE {:#06X}, MS_BYTE {:#05X} : ", opcode, ms_byte);
 
         let nibbles = (
             (opcode & 0xF000) >> 12,
@@ -108,15 +103,10 @@ impl Cpu {
             (opcode & 0x000F)
         );
         let nnn = (opcode & 0x0FFF) as usize; // Address
-        // println!("nnn = {:#X}", nnn);
         let kk = (opcode & 0x00FF) as u8; // OPCODE NN 8 bits
-        // println!("kk = {:#02X}", kk);
         let nx = nibbles.1 as usize; // lower 4 bits of high byte
-        // println!("nx = {:#X}", nx);
         let ny = nibbles.2 as usize; // lower 4 bits of low byte
-        // println!("ny = {:#X}", ny);
-        let n = nibbles.3 as usize; // Lowest 4 bits
-        // println!("n = {:#X}", n);
+        let n = nibbles.3 as usize; // lowest 4 bits
         
             
 
@@ -194,9 +184,10 @@ impl Cpu {
 
     pub fn run_cycle(&mut self, subsystem: &mut Subsystem) {
         let opcode = self.get_opcode();
-        // let opcode = 0xF090;
+        println!("Opcode {:#05X} PC {:#05X} SP {:#05X} DT {:#} ST {:#} I {:#05X} STACK {:#05X},
+         Speed {:#}", opcode, self.pc, self.sp, self.dt, self.st, self.i, self.stack[self.sp],
+          self.speed);
         self.do_opcode(opcode);
-        // println!("PC {:#05X} SP {:#05X} DT {:#05X} ST {:#05X} I {:#05X} STACK {:#05X}", self.pc, self.sp, self.dt, self.st, self.i, self.stack[self.sp]);
         self.handle_timers(subsystem);
     }
 
