@@ -31,7 +31,7 @@ fn game_loop() {
                 match event {
                     Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                         cpu.quit = true;
-                        println!("Quitting...");
+                        println!("Quitting!");
                         break 'running
                     },
                     Event::KeyDown { keycode: Some(Keycode::Space), .. } => { 
@@ -52,7 +52,7 @@ fn game_loop() {
             }
             ::std::thread::sleep(Duration::new(0, 1_000_000_000 as u32 / cpu.speed));
             if pause {
-                // print!(".");
+                println!("Paused!")
                 continue
             }
             else {
