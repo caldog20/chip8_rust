@@ -11,6 +11,13 @@ To run the emulator, clone the repo and inside the directory:
 cargo run </path/to/game>
 ```
 
+If you want to build the source, you can run:
+```
+cargo build --release
+```
+
+The output binary is located at ```target/release/chip8_rust```
+
 The speed the emulator runs can be increased/decreased with Up/Down arrow.
 
 Escape will quit and Space will restart
