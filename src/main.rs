@@ -52,7 +52,8 @@ fn game_loop() {
             }
             ::std::thread::sleep(Duration::new(0, 1_000_000_000 as u32 / cpu.speed));
             if pause {
-                print!(".");
+                // print!(".");
+                continue
             }
             else {
                 cpu.run_cycle(&mut subsystem);
