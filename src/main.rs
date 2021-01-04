@@ -51,12 +51,14 @@ fn game_loop() {
                 }
             }
             ::std::thread::sleep(Duration::new(0, 1_000_000_000 as u32 / cpu.speed));
-            cpu.run_cycle(&mut subsystem);
-            if cpu.draw {
-                subsystem.cpu_draw(&mut cpu, SCALE);
-            }
             if pause {
                 print!(".");
+            }
+            else {
+                cpu.run_cycle(&mut subsystem);
+            }
+            if cpu.draw {
+                subsystem.cpu_draw(&mut cpu, SCALE);
             }
             }
         if cpu.quit == true {
