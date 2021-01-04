@@ -18,6 +18,7 @@ pub fn main() {
 fn game_loop() {
     loop {
         let mut cpu = Cpu::init();
+        let mut pause = false;
 
         let sdl = sdl2::init().unwrap();
         let mut subsystem = Subsystem::init(&sdl, SCALE);
@@ -26,7 +27,6 @@ fn game_loop() {
         cpu.load_rom(&args[1]);
         let mut event_pump = sdl.event_pump().unwrap();
         'running: loop {
-            let mut pause: bool;
             for event in event_pump.poll_iter() {
                 match event {
                     Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
