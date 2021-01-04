@@ -51,7 +51,6 @@ impl Subsystem {
     }
 
     pub fn key_down(&mut self, cpu: &mut Cpu, keycode: Keycode) {
-        println!("KEY DOWN");
         match keycode {
             Keycode::Num1 => { cpu.keyboard[0x1] = true; },
             Keycode::Num2 => { cpu.keyboard[0x2] = true; },
@@ -74,7 +73,6 @@ impl Subsystem {
         }
     }
     pub fn key_up(&mut self, cpu: &mut Cpu, keycode: Keycode) {
-        println!("KEY UP");
         match keycode {
             Keycode::Num1 => { cpu.keyboard[0x1] = false; },
             Keycode::Num2 => { cpu.keyboard[0x2] = false; },
